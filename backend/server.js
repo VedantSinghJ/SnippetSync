@@ -3,8 +3,10 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connect from "./src/db/connect.js";
 import cookieParser from "cookie-parser";
-import fs from "node:fs";
 import errorHandler from "./src/helpers/errorhandler.js";
+import userRoutes from "./src/routes/userRoutes.js";
+import snippetsRoutes from "./src/routes/snippetsRoutes.js";
+import tagsRoutes from "./src/routes/tagsRoutes.js";
 
 dotenv.config();
 
@@ -31,18 +33,10 @@ app.use(errorHandler);
 // Connect to database
 connect();
 
-//routes
-const routeFiles = fs.readdirSync("./src/routes");
-
-routeFiles.forEach((file) => {
-  import(`./src/routes/${file}`)
-    .then((route) => {
-      app.use("/api/v1", route.default);
-    })
-    .catch((err) => {
-      console.log("Failed to load route file", err);
-    });
-});
+// routes
+app.use("/api/v1", userRoutes);
+app.use("/api/v1", snippetsRoutes);
+app.use("/api/v1", tagsRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
