@@ -1,5 +1,3 @@
-# SnippetMaster
-
 Full‑stack MERN app for creating, sharing, and discovering code snippets with user authentication, likes, tags, and a leaderboard. The frontend is a Next.js 14 app; the backend is an Express API with MongoDB.
 
 ## Features
