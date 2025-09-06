@@ -8,14 +8,16 @@ import errorHandler from "./src/helpers/errorhandler.js";
 
 dotenv.config();
 
-const port = process.env.PORT || 8000;
-
 const app = express();
 
 // middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [
+      process.env.CLIENT_URL,
+      "http://localhost:3000",
+      "https://your-app-name.vercel.app"
+    ],
     credentials: true,
   })
 );
@@ -26,11 +28,13 @@ app.use(cookieParser());
 // error handler middleware
 app.use(errorHandler);
 
+// Connect to database
+connect();
+
 //routes
 const routeFiles = fs.readdirSync("./src/routes");
 
 routeFiles.forEach((file) => {
-  // use dynamic import
   import(`./src/routes/${file}`)
     .then((route) => {
       app.use("/api/v1", route.default);
@@ -40,17 +44,10 @@ routeFiles.forEach((file) => {
     });
 });
 
-const server = async () => {
-  try {
-    await connect();
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
 
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
-  } catch (error) {
-    console.log("Failed to strt server.....", error.message);
-    process.exit(1);
-  }
-};
-
-server();
+// Export for Vercel
+export default app;
