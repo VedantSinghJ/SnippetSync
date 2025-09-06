@@ -14,7 +14,7 @@ const SnippetsContext = createContext();
 
 export const SnippetsProvider = ({ children }) => {
   const { closeModal } = useGlobalContext();
-  const serverUrl = "http://localhost:8000/api/v1";
+  const serverUrl = "/api/v1";
 
   const userId = useUserContext().user?._id;
 
